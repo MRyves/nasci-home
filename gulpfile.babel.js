@@ -82,7 +82,9 @@ gulp.task('copy', [
   'copy:license',
   'copy:main.css',
   'copy:misc',
-  'copy:normalize'
+  'copy:normalize',
+  'copy:fullpage.js',
+  'copy:fullpage.css'
 ]);
 
 gulp.task('copy:.htaccess', () =>
@@ -94,7 +96,7 @@ gulp.task('copy:.htaccess', () =>
 gulp.task('copy:index.html', () => {
   const hash = ssri.fromData(
     fs.readFileSync('node_modules/jquery/dist/jquery.min.js'),
-    {algorithms: ['sha256']}
+    { algorithms: ['sha256'] }
   );
   let version = pkg.devDependencies.jquery;
   let modernizrVersion = pkg.devDependencies.modernizr;
@@ -111,6 +113,16 @@ gulp.task('copy:jquery', () =>
     .pipe(plugins().rename(`jquery-${pkg.devDependencies.jquery}.min.js`))
     .pipe(gulp.dest(`${dirs.dist}/js/vendor`))
 );
+
+gulp.task('copy:fullpage.js', () => {
+  gulp.src(['node_modules/fullpage.js/dist/fullpage.min.js'])
+    .pipe(gulp.dest(`${dirs.dist}/js`));
+});
+
+gulp.task('copy:fullpage.css', () => {
+  gulp.src(['node_modules/fullpage.js/dist/fullpage.css'])
+    .pipe(gulp.dest(`${dirs.dist}/css`));
+});
 
 gulp.task('copy:license', () =>
   gulp.src('LICENSE.txt')
@@ -142,10 +154,10 @@ gulp.task('copy:misc', () =>
 
   ], {
 
-    // Include hidden files by default
-    dot: true
+      // Include hidden files by default
+      dot: true
 
-  }).pipe(gulp.dest(dirs.dist))
+    }).pipe(gulp.dest(dirs.dist))
 );
 
 gulp.task('copy:normalize', () =>
@@ -153,7 +165,7 @@ gulp.task('copy:normalize', () =>
     .pipe(gulp.dest(`${dirs.dist}/css`))
 );
 
-gulp.task('modernizr', (done) =>{
+gulp.task('modernizr', (done) => {
 
   modernizr.build(modernizrConfig, (code) => {
     fs.writeFile(`${dirs.dist}/js/vendor/modernizr-${pkg.devDependencies.modernizr}.min.js`, code, done);
